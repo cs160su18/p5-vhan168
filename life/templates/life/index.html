@@ -4,17 +4,119 @@
 
 <html>
 	<head>
-		<title></title>
 
 		<link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="{% static '/life/vendors/bootstrap/css/bootstrap.css' %}" />
+		<link rel="stylesheet" type="text/css" href="{% static '/life/vendor/bootstrap/css/bootstrap.css' %}" />
 		<link rel="stylesheet" type="text/css" href="{% static '/life/css/main.css' %}" />
 
-		<script src="{% static '/life/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
-		<script src="{% static '/life/vendors/jquery-ui/jquery-ui.min.js' %}"></script>
+		<script src="{% static '/life/vendor/jquery/jquery-3.3.1.min.js' %}"></script>
+		<script src="{% static '/life/vendor/jquery-ui/jquery-ui.min.js' %}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    
+    
+    <style>
+      .container{}
+
+      #map_container{
+        position: relative;
+      }
+      #map{
+          padding-bottom: 20%;
+          padding-top: 20%;
+      }
+    </style>
 	</head>
 	<body>
-		<!-- Your layout here -->
-
+    <!-- Headingeading -->
+    <nav class="navbar navbar-dark bg-dark">
+      <span class="navbar-brand h1">From Wait to Fun</span>
+    </nav>
+    
+<!--     <img src="http://gracebaptistchurchsonoma.org/wp-content/uploads/2010/11/GraceMap.gif" /> -->
+    
+    <div class="container">
+      <div id="map_container"></div>
+      <div id="map"></div>
+    </div>	
+    <div> 
+      <h1>Enter new location here:</h1>
+      <ul>
+        <li><input id="location" type="text" placeholder="Add Location"> <br></li>
+        <li><input id="date" type="text" placeholder="Add Date"> <br></li>
+        <li><input id="like" type="text" placeholder="Add Star"> <br></li>
+        <li><input id="comment" type="text" placeholder="Add Comment"> <br></li>
+      </ul>
+      <button class="btn btn-default">Submit</button> <br>
+    </div>
+    <div>
+      <h1>Latest Locations:</h1>
+      <h5>Refresh to see latest locations!</h5>
+        {% if latest_location_list %}
+          <ul>
+          {% for location in latest_location_list %}
+              <li><a href="/life/{{ location.id }}/">{{ location.comment }}</a></li>
+          {% endfor %}
+          </ul>
+      {% else %}
+          <p>No location are available.</p>
+      {% endif %}
+    </div>
+<!--     this is the REAL record.html -->
 	</body>
+  <script>
+//     $('button')
+//       .button()
+//       .click(function(event){
+//         var postdata = {
+//           'location':.location.val(),
+//           'pub_date':.pub_date.val(),
+//           'attract_level':.attract_level_choice(),
+//           'comment':.comment.val(),
+//         };
+//         $.post('/life/map/',postdata);            
+//       })
+  
+  
+	//Google Maps JS, Original code Citation: from Adaptive Map by Brad Frost
+      //On https://codepen.io/bradfrost/pen/tLxAs
+	//Set Map
+	function initialize() {
+			var myLatlng = new google.maps.LatLng(37.869935, -122.268171);
+			var cursorType = 'http://m.schuepfen.ch/icons/helveticons/black/60/Pin-location.png'
+			var mapOptions = {
+				zoom: 15,
+				center: myLatlng,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			}
+
+		var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+		var curLoc = 'Current Location';
+		var infowindow = new google.maps.InfoWindow({
+			content: curLoc,
+		});
+
+		//Add Marker
+		var marker = new google.maps.Marker({
+			position: myLatlng,
+			map: map,
+			icon: imagePath,
+			title: 'image title'
+		});
+
+		google.maps.event.addListener(marker, 'click', function() {
+			infowindow.open(map,marker);
+		});
+
+		//Resize Function
+		google.maps.event.addDomListener(window, "resize", function() {
+			var center = map.getCenter();
+			google.maps.event.trigger(map, "resize");
+			map.setCenter(center);
+		});
+	}
+	google.maps.event.addDomListener(window, 'load', initialize);
+    
+    
+    
+  </script>
 </html>
